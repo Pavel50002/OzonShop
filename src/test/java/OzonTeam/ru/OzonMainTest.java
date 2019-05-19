@@ -20,12 +20,12 @@ import static org.apache.http.client.methods.RequestBuilder.post;
 //io.restassured.module.jsv.JsonSchemaValidator.*
 //io.restassured.RestAssured.equalTo;
 //        io.restassured.matcher.RestAssuredMatchers.*
- //       org.hamcrest.Matchers.*
+//       org.hamcrest.Matchers.*
 //io.restassured.module.mockmvc.RestAssuredMockMvc.*
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
-public class OzonMainTest extends RestUtil  {
+public class OzonMainTest extends RestUtil {
 
 
     @BeforeTest()
@@ -35,7 +35,7 @@ public class OzonMainTest extends RestUtil  {
     }
 
     @Test(description = "Авторизация, получение токена")
-   public void Auth() throws IOException {
+    public void Auth() throws IOException {
 
 
         Response response = given().when()
@@ -47,41 +47,28 @@ public class OzonMainTest extends RestUtil  {
                 .multiPart("app_version", "browser-ozonshop")
                 .post(EndPoint.UrlToken)
                 .then()
-              //  .body("token_type", equalTo("Bearer"))
+                //  .body("token_type", equalTo("Bearer"))
                 .log()
                 .all().extract().response();
         String stringResponse = response.path("access_token");
-        System.out.println(stringResponse);
         RestUtil SessionId = new RestUtil();
-            SessionId.setToken(stringResponse);
-       // System.out.println(stringResponse);
-
-        // String  resource = generateStringFromResource(EndPoint.bodyozon);
-
-       // SessionId stringResponse = response.as(SessionId.class);
-
-
-
+        SessionId.setToken(stringResponse);
     }
 
     @Test(description = "Получение данных аккаунта после авторизации по Bearer Token")
     public void SetBearrerToken() throws IOException {
-
 
         given()
                 .auth().oauth2(Token)
                 .when()
                 .get(EndPoint.Auth)
                 .then()
-                .body("email",equalTo("pavel50002@yandex.ru"))
-                .body("loyaltyStatus.id",equalTo(5))
-                .body("loyaltyStatus.premiumTypeId",equalTo(4))
+                .body("email", equalTo("pavel50002@yandex.ru"))
+                .body("loyaltyStatus.id", equalTo(5))
+                .body("loyaltyStatus.premiumTypeId", equalTo(4))
                 .statusCode(200).log().all();
-
+        System.out.println(getToken());
     }
-
-
-
 
 
 }
