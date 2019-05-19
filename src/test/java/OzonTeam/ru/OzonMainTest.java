@@ -40,8 +40,8 @@ String SessionId;
 
         this.SessionId = given().when()
                 .contentType("multipart/form-data")
-                .multiPart("userName", "pavel50002@yandex.ru")
-                .multiPart("password", "97I5k8f4321")
+                .multiPart("userName", "pavel@ya.ru")
+                .multiPart("password", "97")
                 .multiPart("grant_type", "password")
                 .multiPart("client_id", "web")
                 .multiPart("app_version", "browser-ozonshop")
