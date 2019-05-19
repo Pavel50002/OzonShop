@@ -1,5 +1,6 @@
 package OzonTeam.ru;
 
+import Utils.RestUtil;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import org.testng.annotations.BeforeTest;
@@ -24,57 +25,58 @@ import static org.apache.http.client.methods.RequestBuilder.post;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
-public class OzonMainTest extends TestBase {
-
-String SessionId;
+public class OzonMainTest extends RestUtil  {
 
 
     @BeforeTest()
     public void requestSpec() {
         RestAssured.baseURI = "https://api.ozon.ru/";
+
     }
 
-    @Test(description = "dd")
-   public void auth() throws IOException {
+    @Test(description = "Авторизация, получение токена")
+   public void Auth() throws IOException {
 
 
-        this.SessionId = given().when()
+        Response response = given().when()
                 .contentType("multipart/form-data")
-                .multiPart("userName", "pavel@ya.ru")
-                .multiPart("password", "97")
+                .multiPart("userName", "pavel50002@yandex.ru")
+                .multiPart("password", "97I5k8f4321")
                 .multiPart("grant_type", "password")
                 .multiPart("client_id", "web")
                 .multiPart("app_version", "browser-ozonshop")
-                .post("oauth/v1/auth/token")
+                .post(EndPoint.UrlToken)
                 .then()
-                .body("token_type", equalTo("Bearer"))
+              //  .body("token_type", equalTo("Bearer"))
                 .log()
-                .all().extract().path("access_token");
+                .all().extract().response();
+        String stringResponse = response.path("access_token");
+        System.out.println(stringResponse);
+        RestUtil SessionId = new RestUtil();
+            SessionId.setToken(stringResponse);
+       // System.out.println(stringResponse);
+
         // String  resource = generateStringFromResource(EndPoint.bodyozon);
-     //  String stringResponse = message.path("access_token");
+
        // SessionId stringResponse = response.as(SessionId.class);
 
 
 
-        given()
-                .auth().oauth2(SessionId)
-                .when()
-                .get("https://api.ozon.ru/user/v5/")
-                .then().log().all()
-                .statusCode(200);
-        System.out.println(SessionId);
-        //  given().get("user/v5/").then().header("Authorization", stringResponse).log().all();
-
     }
 
-    @Test(description = "dd")
-    public void TEST()  {
+    @Test(description = "Получение данных аккаунта после авторизации по Bearer Token")
+    public void SetBearrerToken() throws IOException {
+
 
         given()
-                .auth().oauth2(SessionId)
+                .auth().oauth2(Token)
                 .when()
-                .get("https://api.ozon.ru/user/v5/")
-               .then().log().all();
+                .get(EndPoint.Auth)
+                .then()
+                .body("email",equalTo("pavel50002@yandex.ru"))
+                .body("loyaltyStatus.id",equalTo(5))
+                .body("loyaltyStatus.premiumTypeId",equalTo(4))
+                .statusCode(200).log().all();
 
     }
 

@@ -11,7 +11,7 @@ repositories {
 }
 
 dependencies {
-    testCompile 'io.rest-assured:rest-assured:4.0.0'
+    //testCompile 'io.rest-assured:rest-assured:4.0.0'
     compile 'io.rest-assured:json-path:4.0.0'
     compile 'io.rest-assured:xml-path:4.0.0'
     testCompile 'io.rest-assured:json-schema-validator:4.0.0'
@@ -20,4 +20,5 @@ dependencies {
     testCompile 'io.rest-assured:scala-support:4.0.0'
     compile 'com.slickqa:testng:7.0.0-7'
     implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'com.jayway.restassured:rest-assured:2.9.0'
 }
