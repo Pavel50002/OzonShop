@@ -10,6 +10,8 @@ import com.jayway.restassured.response.Response;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import static com.jayway.restassured.RestAssured.*;
 
@@ -24,6 +26,10 @@ public class RestUtil {
         this.Token = token;
     }
 
+    public String generateStringFromResource(String path) throws IOException {
 
+        return new String(Files.readAllBytes(Paths.get(path)));
+
+    }
 
 }

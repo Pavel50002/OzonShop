@@ -2,6 +2,7 @@ package OzonTeam.ru;
 
 import Utils.RestUtil;
 import io.restassured.RestAssured;
+import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
@@ -34,7 +35,7 @@ public class OzonMainTest extends RestUtil {
 
     }
 
-    @Test(description = "Авторизация, получение токена")
+    @Test(priority = 1, description = "Авторизация, получение токена")
     public void Auth() throws IOException {
 
 
@@ -55,7 +56,7 @@ public class OzonMainTest extends RestUtil {
         SessionId.setToken(stringResponse);
     }
 
-    @Test(description = "Получение данных аккаунта после авторизации по Bearer Token")
+    @Test(priority = 2, description = "Получение данных аккаунта после авторизации по Bearer Token")
     public void SetBearrerToken() throws IOException {
 
         given()
@@ -68,6 +69,19 @@ public class OzonMainTest extends RestUtil {
                 .body("loyaltyStatus.premiumTypeId", equalTo(4))
                 .statusCode(200).log().all();
         System.out.println(getToken());
+    }
+
+    @Test(priority = 3, description = "Добавление товара в карзину")
+    public void AddProductToCart() throws IOException {
+        String JsonBody = generateStringFromResource(EndPoint.bodyozon);
+        given()
+                .auth().oauth2(Token)
+                .contentType(ContentType.JSON)
+                .body(JsonBody)
+                .when()
+                .post(EndPoint.AddProductToCart)
+                .then()
+                .statusCode(200).log().all();
     }
 
 
