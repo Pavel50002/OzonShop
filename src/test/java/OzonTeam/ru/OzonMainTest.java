@@ -84,7 +84,19 @@ public class OzonMainTest extends RestUtil {
                 .statusCode(200).log().all();
     }
 
-
+@Test(priority = 4,description = "Проверка что лежит в карзине")
+public void WhatProductToCart(){
+        given()
+                .auth().oauth2(Token)
+                .contentType(ContentType.JSON)
+                .when()
+                .get(EndPoint.WhatProductToCar)
+                .then()
+                .body("[0].name",equalTo("Термос Biostal \"Flёr\", цвет: стальной, розовый, 500 мл"))
+                .body("[0].price", equalTo(971.0000f))
+                .body("[0].cart",equalTo("ozon"))
+                .statusCode(200).log().all();
+}
 }
 
 
