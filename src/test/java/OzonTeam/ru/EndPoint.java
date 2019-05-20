@@ -5,6 +5,7 @@ public interface EndPoint {
     String Auth = "user/v5/";
     String AddProductToCart = "cart/v6/items";
     String WhatProductToCar ="cart/v6/summary";
+    String DeleteProductToCart = "cart/v6/items";
 
 
 

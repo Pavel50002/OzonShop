@@ -3,11 +3,14 @@ package OzonTeam.ru;
 import Utils.RestUtil;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import sun.misc.IOUtils;
+import sun.misc.Resource;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -25,6 +28,7 @@ import static org.apache.http.client.methods.RequestBuilder.post;
 //io.restassured.module.mockmvc.RestAssuredMockMvc.*
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.in;
 
 public class OzonMainTest extends RestUtil {
 
@@ -48,7 +52,7 @@ public class OzonMainTest extends RestUtil {
                 .multiPart("app_version", "browser-ozonshop")
                 .post(EndPoint.UrlToken)
                 .then()
-                //  .body("token_type", equalTo("Bearer"))
+                .body("token_type", equalTo("Bearer"))
                 .log()
                 .all().extract().response();
         String stringResponse = response.path("access_token");
@@ -74,6 +78,7 @@ public class OzonMainTest extends RestUtil {
     @Test(priority = 3, description = "Добавление товара в карзину")
     public void AddProductToCart() throws IOException {
         String JsonBody = generateStringFromResource(EndPoint.bodyozon);
+        String IdProduct = JsonPath.given(JsonBody).getString("[0].id");
         given()
                 .auth().oauth2(Token)
                 .contentType(ContentType.JSON)
@@ -82,21 +87,46 @@ public class OzonMainTest extends RestUtil {
                 .post(EndPoint.AddProductToCart)
                 .then()
                 .statusCode(200).log().all();
+
+        System.out.println("Товар с id "+ IdProduct+" добавлен в карзину");
     }
 
 @Test(priority = 4,description = "Проверка что лежит в карзине")
-public void WhatProductToCart(){
-        given()
-                .auth().oauth2(Token)
-                .contentType(ContentType.JSON)
-                .when()
-                .get(EndPoint.WhatProductToCar)
-                .then()
+public void WhatProductToCart() throws IOException{
+
+    given()
+            .auth().oauth2(Token)
+            .contentType(ContentType.JSON)
+            .get(EndPoint.WhatProductToCar)
+            .then()
                 .body("[0].name",equalTo("Термос Biostal \"Flёr\", цвет: стальной, розовый, 500 мл"))
                 .body("[0].price", equalTo(971.0000f))
                 .body("[0].cart",equalTo("ozon"))
-                .statusCode(200).log().all();
+           .statusCode(200).log().all();
+
+         Id = given()
+                .auth().oauth2(Token)
+                .contentType(ContentType.JSON)
+                .get(EndPoint.WhatProductToCar).jsonPath().getString("[0].id");
+
 }
+@Test(priority = 5,description = "Удаление товара из корзины")
+    private void DeleteProductToCart() throws IOException {
+       String Idarrow = "["+Id+"]";
+    System.out.println(Idarrow);
+        given()
+                .auth().oauth2(Token)
+                .contentType(ContentType.JSON)
+                .body(Idarrow)
+                .when()
+                .delete(EndPoint.DeleteProductToCart)
+                .then()
+                .statusCode(200)
+                .log().all();
+    System.out.println("Товар с Id "+Idarrow+" удален");
+}
+
+
 }
 
 

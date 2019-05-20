@@ -26,6 +26,19 @@ public class RestUtil {
         this.Token = token;
     }
 
+
+    public static String Id;
+    public String getId() {
+        return Id;
+    }
+    public void setId(String id) {
+        this.Id = id;
+    }
+
+
+
+
+
     public String generateStringFromResource(String path) throws IOException {
 
         return new String(Files.readAllBytes(Paths.get(path)));
