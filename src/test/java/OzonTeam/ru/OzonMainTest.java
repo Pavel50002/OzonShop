@@ -5,6 +5,8 @@ import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
+import org.hamcrest.Matcher;
+import org.hamcrest.Matchers;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 import sun.misc.IOUtils;
@@ -73,9 +75,24 @@ public class OzonMainTest extends RestUtil {
                 .body("loyaltyStatus.premiumTypeId", equalTo(4))
                 .statusCode(200).log().all();
         System.out.println(getToken());
+
+
+
+        }
+    @Test(priority = 3, description = "Проверка статуса авторизации")
+    public void StatusAuth() throws IOException{
+        given()
+                .auth().oauth2(Token)
+                .contentType(ContentType.JSON)
+                .get(EndPoint.StatusAuth)
+                .then()
+               .body("verified.forOrder", Matchers.is(true))
+               .body("$.otp.active",Matchers.is(false))
+                .statusCode(200)
+                .log().all();
     }
 
-    @Test(priority = 3, description = "Добавление товара в карзину")
+    @Test(priority = 4, description = "Добавление товара в карзину")
     public void AddProductToCart() throws IOException {
         String JsonBody = generateStringFromResource(EndPoint.bodyozon);
         String IdProduct = JsonPath.given(JsonBody).getString("[0].id");
@@ -91,7 +108,7 @@ public class OzonMainTest extends RestUtil {
         System.out.println("Товар с id "+ IdProduct+" добавлен в карзину");
     }
 
-@Test(priority = 4,description = "Проверка что лежит в карзине")
+@Test(priority = 5,description = "Проверка что лежит в карзине")
 public void WhatProductToCart() throws IOException{
 
     given()
@@ -110,7 +127,7 @@ public void WhatProductToCart() throws IOException{
                 .get(EndPoint.WhatProductToCar).jsonPath().getString("[0].id");
 
 }
-@Test(priority = 5,description = "Удаление товара из корзины")
+@Test(priority = 6,description = "Удаление товара из корзины")
     private void DeleteProductToCart() throws IOException {
        String Idarrow = "["+Id+"]";
     System.out.println(Idarrow);

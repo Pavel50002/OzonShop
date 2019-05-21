@@ -6,6 +6,7 @@ public interface EndPoint {
     String AddProductToCart = "cart/v6/items";
     String WhatProductToCar ="cart/v6/summary";
     String DeleteProductToCart = "cart/v6/items";
+    String StatusAuth = "user/v5/account/phone/79269800344/status";
 
 
 
