@@ -2,18 +2,9 @@ package Utils;
 
 
 
-import com.jayway.restassured.RestAssured;
-import com.jayway.restassured.filter.session.SessionFilter;
-import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.path.json.JsonPath;
-import com.jayway.restassured.response.Response;
-import org.testng.annotations.Test;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
-import static com.jayway.restassured.RestAssured.*;
 
 public class RestUtil {
 
@@ -25,7 +16,7 @@ public class RestUtil {
     public void setToken(String token) {
         this.Token = token;
     }
-
+////////////////////////////////////////
 
     public static String Id;
     public String getId() {
@@ -34,8 +25,16 @@ public class RestUtil {
     public void setId(String id) {
         this.Id = id;
     }
+///////////////////////////////////////
 
 
+        public static String Uid;
+        public String getUserIdIn() {
+            return Uid;
+        }
+        public void setUserIdIn(String UserId) {
+            this.Uid = UserId;
+        }
 
 
 

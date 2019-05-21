@@ -1,6 +1,7 @@
 package OzonTeam.ru;
 
 import Utils.RestUtil;
+
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
 import io.restassured.path.json.JsonPath;
@@ -44,7 +45,6 @@ public class OzonMainTest extends RestUtil {
     @Test(priority = 1, description = "Авторизация, получение токена")
     public void Auth() throws IOException {
 
-
         Response response = given().when()
                 .contentType("multipart/form-data")
                 .multiPart("userName", "pavel50002@yandex.ru")
@@ -62,20 +62,31 @@ public class OzonMainTest extends RestUtil {
         SessionId.setToken(stringResponse);
     }
 
+
+
     @Test(priority = 2, description = "Получение данных аккаунта после авторизации по Bearer Token")
     public void SetBearrerToken() throws IOException {
 
-        given()
+
+      Response response =  given()
                 .auth().oauth2(Token)
                 .when()
                 .get(EndPoint.Auth)
                 .then()
-                .body("email", equalTo("pavel50002@yandex.ru"))
+              .body("userId", Matchers.is(19162203))
+                .body("isLoggedIn", equalTo(true))
                 .body("loyaltyStatus.id", equalTo(5))
                 .body("loyaltyStatus.premiumTypeId", equalTo(4))
-                .statusCode(200).log().all();
-        System.out.println(getToken());
+                .statusCode(200)
+                .log().all().extract().response();
+      String IdUser = response.path("userId").toString();
+      RestUtil IDuser1 = new RestUtil();
+      IDuser1.setUserIdIn(IdUser);
+        System.out.println("Id пользователя " + Uid);
 
+
+
+        System.out.println("Токен авторизации "+getToken());
 
 
         }
@@ -86,13 +97,28 @@ public class OzonMainTest extends RestUtil {
                 .contentType(ContentType.JSON)
                 .get(EndPoint.StatusAuth)
                 .then()
-               .body("verified.forOrder", Matchers.is(true))
-               .body("$.otp.active",Matchers.is(false))
+                .body("verified.forOrder", Matchers.is(true))
+                .body("otp.active",Matchers.is(false))
                 .statusCode(200)
                 .log().all();
     }
 
-    @Test(priority = 4, description = "Добавление товара в карзину")
+    @Test(priority = 4, description = "Получение id пользователя который авторизовался")
+    private void GetIdUser() throws IOException{
+        given()
+                .auth().oauth2(Token)
+                .contentType(ContentType.JSON)
+                .param("clientId", Uid)
+                .get(EndPoint.GetIdUser)
+                .then()
+                .body("fio",equalTo("ERSHOVA Pavel ggr"))
+                .body("age", equalTo(29))
+                .statusCode(200)
+                .log().all();
+
+    }
+
+    @Test(priority = 5, description = "Добавление товара в карзину")
     public void AddProductToCart() throws IOException {
         String JsonBody = generateStringFromResource(EndPoint.bodyozon);
         String IdProduct = JsonPath.given(JsonBody).getString("[0].id");
@@ -108,7 +134,7 @@ public class OzonMainTest extends RestUtil {
         System.out.println("Товар с id "+ IdProduct+" добавлен в карзину");
     }
 
-@Test(priority = 5,description = "Проверка что лежит в карзине")
+@Test(priority = 6,description = "Проверка что лежит в карзине")
 public void WhatProductToCart() throws IOException{
 
     given()
@@ -127,7 +153,9 @@ public void WhatProductToCart() throws IOException{
                 .get(EndPoint.WhatProductToCar).jsonPath().getString("[0].id");
 
 }
-@Test(priority = 6,description = "Удаление товара из корзины")
+
+
+@Test(priority = 7,description = "Удаление товара из корзины")
     private void DeleteProductToCart() throws IOException {
        String Idarrow = "["+Id+"]";
     System.out.println(Idarrow);
