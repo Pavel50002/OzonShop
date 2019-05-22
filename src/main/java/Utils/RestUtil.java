@@ -36,6 +36,17 @@ public class RestUtil {
             this.Uid = UserId;
         }
 
+ ///////////////////////////////////////
+
+
+    public static String Eamil;
+    public String getUserEmail() {
+        return Eamil;
+    }
+    public void setUserEmail(String setEmail) {
+        this.Eamil = setEmail;
+    }
+
 
 
     public String generateStringFromResource(String path) throws IOException {

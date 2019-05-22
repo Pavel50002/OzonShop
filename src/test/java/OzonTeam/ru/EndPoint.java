@@ -8,6 +8,7 @@ public interface EndPoint {
     String DeleteProductToCart = "cart/v6/items";
     String StatusAuth = "user/v5/account/phone/79269800344/status";
     String GetIdUser = "user/v5/public";
+    String SearchEmail = "user/v5/reg/check";
 
 
 

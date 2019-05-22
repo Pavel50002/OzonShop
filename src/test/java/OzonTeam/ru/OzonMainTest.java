@@ -47,8 +47,8 @@ public class OzonMainTest extends RestUtil {
 
         Response response = given().when()
                 .contentType("multipart/form-data")
-                .multiPart("userName", "pavel50002@yandex.ru")
-                .multiPart("password", "97I5k8f4321")
+                .multiPart("userName", "@@@@@@@")
+                .multiPart("password", "@@@@@@@")
                 .multiPart("grant_type", "password")
                 .multiPart("client_id", "web")
                 .multiPart("app_version", "browser-ozonshop")
@@ -81,7 +81,11 @@ public class OzonMainTest extends RestUtil {
                 .log().all().extract().response();
       String IdUser = response.path("userId").toString();
       RestUtil IDuser1 = new RestUtil();
-      IDuser1.setUserIdIn(IdUser);
+        IDuser1.setUserIdIn(IdUser);
+      String Email = response.path("email");
+      RestUtil SetEmail = new RestUtil();
+        SetEmail.setUserEmail(Email);
+
         System.out.println("Id пользователя " + Uid);
 
 
@@ -170,7 +174,19 @@ public void WhatProductToCart() throws IOException{
                 .log().all();
     System.out.println("Товар с Id "+Idarrow+" удален");
 }
-
+@Test(priority = 8 , description = "Проверка есть ли Email")
+    private  void SearchEmail() {
+        given()
+                .auth().oauth2(Token)
+                .contentType(ContentType.JSON)
+                .when()
+                .param("login", Eamil)
+                .get(EndPoint.SearchEmail)
+                .then()
+                .body("status", equalTo("found"))
+                .statusCode(200)
+                .log().all();
+}
 
 }
 
