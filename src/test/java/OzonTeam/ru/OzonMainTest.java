@@ -131,7 +131,7 @@ public class OzonMainTest extends RestUtil {
 
     }
 
-    @Test(priority = 5, description = "Добавление товара в карзину")
+    @Test(priority = 5, description = "Добавление товара в корзину")
     public void AddProductToCart() throws IOException {
         String JsonBody = generateStringFromResource(EndPoint.bodyozon);
         String IdProduct = JsonPath.given(JsonBody).getString("[0].id");
@@ -144,10 +144,10 @@ public class OzonMainTest extends RestUtil {
                 .then()
                 .statusCode(200).log().all();
 
-        System.out.println("Товар с id "+ IdProduct+" добавлен в карзину");
+        System.out.println("Товар с id "+ IdProduct+" добавлен в корзину");
     }
 
-@Test(priority = 6,description = "Проверка что лежит в карзине")
+@Test(priority = 6,description = "Проверка что лежит в корзине")
 public void WhatProductToCart() throws IOException{
 
     given()
