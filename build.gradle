@@ -26,6 +26,6 @@ dependencies {
 
 test {
     useTestNG() {
-        systemProperty 'allure.results.directory', 'C:/Users/pershov/.jenkins/workspace/StarWars/target/allure-results'
+        systemProperty 'allure.results.directory', 'C:/Users/pershov/.jenkins/workspace/Ozon/target/allure-results'
     }
 }
