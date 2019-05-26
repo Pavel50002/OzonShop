@@ -21,4 +21,11 @@ dependencies {
     compile 'com.slickqa:testng:7.0.0-7'
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'com.jayway.restassured:rest-assured:2.9.0'
+    compile 'ru.yandex.qatools.allure:allure-testng-adaptor:1.5.4'
+}
+
+test {
+    useTestNG() {
+        systemProperty 'allure.results.directory', 'C:/Users/pershov/.jenkins/workspace/StarWars/target/allure-results'
+    }
 }

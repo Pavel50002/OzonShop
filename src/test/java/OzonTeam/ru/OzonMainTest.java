@@ -249,7 +249,6 @@ assertThat(Noutbook, equalTo("[id:30601, title:Игровые ноутбуки, 
 
     @Test(priority = 11, description = "Ищем на Ozon asus+zenfone+max+m2")
     private void SearchOzon () throws IOException {
-        Auth();
 String Url = "asus+zenfone+max+m2";
        Response Idprodyct  = given()
                 .auth().oauth2(Token)
