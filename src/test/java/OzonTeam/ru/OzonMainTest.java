@@ -2,10 +2,15 @@ package OzonTeam.ru;
 
 import Utils.RestUtil;
 
+import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.google.gson.Gson;
+import com.jayway.restassured.response.Cookies;
 import io.restassured.RestAssured;
 import io.restassured.http.ContentType;
+import io.restassured.http.Cookie;
 import io.restassured.path.json.JsonPath;
 import io.restassured.response.Response;
+import org.apache.http.client.methods.RequestBuilder;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.testng.annotations.BeforeTest;
@@ -13,11 +18,13 @@ import org.testng.annotations.Test;
 import sun.misc.IOUtils;
 import sun.misc.Resource;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
+import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
 import static io.restassured.RestAssured.*;
+import static io.restassured.http.ContentType.JSON;
 import static io.restassured.module.jsv.JsonSchemaValidator.matchesJsonSchemaInClasspath;
 import static io.restassured.module.mockmvc.RestAssuredMockMvc.get;
 import static org.apache.http.client.methods.RequestBuilder.post;
@@ -36,6 +43,8 @@ import static org.hamcrest.Matchers.in;
 public class OzonMainTest extends RestUtil {
 
 
+
+
     @BeforeTest()
     public void requestSpec() {
         RestAssured.baseURI = "https://api.ozon.ru/";
@@ -47,14 +56,15 @@ public class OzonMainTest extends RestUtil {
 
         Response response = given().when()
                 .contentType("multipart/form-data")
-                .multiPart("userName", "@@@@@@@")
-                .multiPart("password", "@@@@@@@")
+                .multiPart("userName", "pavel50002@yandex.ru")
+                .multiPart("password", "97I5k8f4321")
                 .multiPart("grant_type", "password")
                 .multiPart("client_id", "web")
                 .multiPart("app_version", "browser-ozonshop")
                 .post(EndPoint.UrlToken)
                 .then()
                 .body("token_type", equalTo("Bearer"))
+
                 .log()
                 .all().extract().response();
         String stringResponse = response.path("access_token");
@@ -89,7 +99,6 @@ public class OzonMainTest extends RestUtil {
         System.out.println("Id пользователя " + Uid);
 
 
-
         System.out.println("Токен авторизации "+getToken());
 
 
@@ -98,7 +107,7 @@ public class OzonMainTest extends RestUtil {
     public void StatusAuth() throws IOException{
         given()
                 .auth().oauth2(Token)
-                .contentType(ContentType.JSON)
+                .contentType(JSON)
                 .get(EndPoint.StatusAuth)
                 .then()
                 .body("verified.forOrder", Matchers.is(true))
@@ -111,7 +120,7 @@ public class OzonMainTest extends RestUtil {
     private void GetIdUser() throws IOException{
         given()
                 .auth().oauth2(Token)
-                .contentType(ContentType.JSON)
+                .contentType(JSON)
                 .param("clientId", Uid)
                 .get(EndPoint.GetIdUser)
                 .then()
@@ -128,7 +137,7 @@ public class OzonMainTest extends RestUtil {
         String IdProduct = JsonPath.given(JsonBody).getString("[0].id");
         given()
                 .auth().oauth2(Token)
-                .contentType(ContentType.JSON)
+                .contentType(JSON)
                 .body(JsonBody)
                 .when()
                 .post(EndPoint.AddProductToCart)
@@ -143,17 +152,17 @@ public void WhatProductToCart() throws IOException{
 
     given()
             .auth().oauth2(Token)
-            .contentType(ContentType.JSON)
+            .contentType(JSON)
             .get(EndPoint.WhatProductToCar)
             .then()
                 .body("[0].name",equalTo("Термос Biostal \"Flёr\", цвет: стальной, розовый, 500 мл"))
-                .body("[0].price", equalTo(971.0000f))
+                .body("[0].price", equalTo(1124.0000f))
                 .body("[0].cart",equalTo("ozon"))
            .statusCode(200).log().all();
 
          Id = given()
                 .auth().oauth2(Token)
-                .contentType(ContentType.JSON)
+                .contentType(JSON)
                 .get(EndPoint.WhatProductToCar).jsonPath().getString("[0].id");
 
 }
@@ -165,7 +174,7 @@ public void WhatProductToCart() throws IOException{
     System.out.println(Idarrow);
         given()
                 .auth().oauth2(Token)
-                .contentType(ContentType.JSON)
+                .contentType(JSON)
                 .body(Idarrow)
                 .when()
                 .delete(EndPoint.DeleteProductToCart)
@@ -178,7 +187,7 @@ public void WhatProductToCart() throws IOException{
     private  void SearchEmail() {
         given()
                 .auth().oauth2(Token)
-                .contentType(ContentType.JSON)
+                .contentType(JSON)
                 .when()
                 .param("login", Eamil)
                 .get(EndPoint.SearchEmail)
@@ -188,6 +197,74 @@ public void WhatProductToCart() throws IOException{
                 .log().all();
 }
 
+@Test(priority = 9, description = "Получаем категорию товаров в .txt сохраняем его в файл в формате .json читаем и создаем assert")
+    private void CategoryProduct() throws IOException {
+
+      Response Nout = given()
+                .param("context","ozon")
+                .param("abgroup", "3")
+                .param("areaid", "2")
+                .contentType(JSON)
+                .get(EndPoint.CategoryProduct)
+
+                .then().statusCode(200)
+             //   .body("categories.[0].categories.[1].categories.[1].title",equalTo("Игровые ноутбуки"))
+                .extract().response();
+
+      String comp = Nout.asString();
+    FileWriter data = new FileWriter("C:/ProjectIDEA/Ozon/src/test/resources/Noutbook.json");
+    data.write(comp);
+    data.flush();
+    data.close();
+
+
+
+//    FileReader reader = new FileReader("C:\\ProjectIDEA\\Ozon\\src\\test\\resources\\Noutbook.json");
+//    reader.read();
+//    reader.toString();
+//    System.out.println(reader);
+
+    String JsonBody = generateStringFromResource(EndPoint.Noutbook);
+    String Noutbook = JsonPath.given(JsonBody).getString("categories[0].categories[1].categories[1]");
+
+    System.out.println(Noutbook);
+assertThat(Noutbook, equalTo("[id:30601, title:Игровые ноутбуки, url:/category/igrovye-noutbuki-15821/]"));
+
+}
+
+@Test(priority = 10, description = "Определение местоположения клиента по ip адресу")
+    private void IpAdres () throws IOException {
+
+            given()
+                    .auth().oauth2(Token)
+                    .accept(JSON)
+                    .param("ip","95.165.68.169")
+                    .get(EndPoint.Ipaddres)
+                    .then()
+                    .body("current.name",equalTo("Москва"))
+                    .statusCode(200)
+                    .log().all();
+
+}
+
+    @Test(priority = 11, description = "Ищем на Ozon asus+zenfone+max+m2")
+    private void SearchOzon () throws IOException {
+        Auth();
+String Url = "asus+zenfone+max+m2";
+       Response Idprodyct  = given()
+                .auth().oauth2(Token)
+                .accept(JSON)
+                .param("url", "/searchSuggestions/?text="+Url+"&url=/")
+                .get("composer-api.bx/page/json/v1")
+                .then()
+                .statusCode(200)
+                .log().all().extract().response();
+        String stringResponse = Idprodyct.path("catalog.searchSuggestions.searchSuggestions-3-default-1.items[5].link");
+       RestUtil ItemsId = new RestUtil();
+        RestUtil SessionId = new RestUtil();
+        SessionId.setIdprod(stringResponse);
+        System.out.println(Idprod);
+    }
 }
 
 

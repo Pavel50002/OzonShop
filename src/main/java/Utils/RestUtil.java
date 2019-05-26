@@ -46,7 +46,15 @@ public class RestUtil {
     public void setUserEmail(String setEmail) {
         this.Eamil = setEmail;
     }
+//////////////////////////////////////////////
 
+    public static String Idprod;
+    public String getIdprod() {
+        return Idprod;
+    }
+    public void setIdprod(String Idprodyct) {
+        this.Idprod = Idprodyct;
+    }
 
 
     public String generateStringFromResource(String path) throws IOException {

@@ -9,8 +9,11 @@ public interface EndPoint {
     String StatusAuth = "user/v5/account/phone/79269800344/status";
     String GetIdUser = "user/v5/public";
     String SearchEmail = "user/v5/reg/check";
+    String CategoryProduct = "cms-api.bx/menu/category/v1";
+    String Ipaddres = "location/v2/current";
 
 
 
+    String Noutbook = "C:/ProjectIDEA/Ozon/src/test/resources/Noutbook.json";
     String bodyozon = "C:/ProjectIDEA/Ozon/src/test/resources/BodyOzon.json";
 }
